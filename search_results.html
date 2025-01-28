@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBites - Search Results</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="index.html"><span class="title-eco">Eco</span><span class="title-bites">Bites</span></a></h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="recipes.html">Recipes</a></li>
+                <li class="hidden" id="favorites-link"><a href="favorites.html">Favorites</a></li>
+                <li id="sign-in-link"><a href="signin.html">Sign In</a></li>
+                <li class="hidden" id="profile-link"><a href="profile.html">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="search-results">
+            <h2>Search Results</h2>
+            <div id="recipes-container" class="recipe-container"></div>
+            <div id="pagination-container" class="pagination"></div>
+            <p id="loading-indicator" class="hidden">Loading recipes...</p>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 EcoBites. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up / Sign In</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="api.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+
+        .signup-container {
+            display: flex;
+            flex: 1;
+        }
+
+        .image-section {
+            flex: 1;
+            background-color: #f7a32b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-section img {
+            max-height: 80%;
+            max-width: 80%;
+        }
+
+        .form-section {
+            flex: 1;
+            background-color: #f3f0e5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .website-name {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #f7a32b;
+        }
+
+        .form-container {
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-container label {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .form-container .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-container .checkbox-container input {
+            margin-right: 10px;
+        }
+
+        .form-container button {
+            background-color: #f7a32b;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #e09628;
+        }
+
+        .form-container .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .form-container .footer a {
+            color: #f7a32b;
+            text-decoration: none;
+        }
+
+        .form-container .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="image-section">
+            <img src="images/burger.png" alt="Burger Image">
+        </div>
+        <div class="form-section">
+            <div class="website-name">EcoBites</div>
+            <div class="form-container">
+                <h2>Create Account</h2>
+                <form id="signup-form">
+                    <div class="error hidden" id="error-message"></div>
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+
+                    <div class="password-toggle">
+                        <input type="checkbox" id="show-password">
+                        <label for="show-password">Show Password</label>
+                    </div>
+
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter your password" required>
+
+                    <label>
+                        <input type="checkbox" id="terms" required>
+                        I agree to the <a href="#">terms and conditions</a>
+                    </label>
+
+                    <button type="submit">Sign Up</button>
+                </form>
+                <div class="footer">
+                    Already have an account? <a href="signin.html">Sign in Here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const signupForm = document.getElementById('signup-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const errorMessage = document.getElementById('error-message');
+        const showPasswordCheckbox = document.getElementById('show-password');
+
+        // Toggle password visibility
+        showPasswordCheckbox.addEventListener('change', () => {
+            const type = showPasswordCheckbox.checked ? 'text' : 'password';
+            passwordInput.type = type;
+            confirmPasswordInput.type = type;
+        });
+
+        // Validate the form
+        signupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+
+            // Reset error message
+            errorMessage.textContent = '';
+            errorMessage.classList.add('hidden');
+
+            // Email validation
+            if (!/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i.test(email)) {
+                errorMessage.textContent = 'Please enter a valid email address.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Password strength validation
+            if (password.length < 8 || !/[A-Z]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+                errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter and a special character.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Password match validation
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            alert('Account created successfully!');
+            signupForm.reset();
+        });
+    </script>
+</body>
+</html>

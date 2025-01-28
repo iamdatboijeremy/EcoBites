@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - EcoBites</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="api.js" defer></script>
+    <script src="favorites.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html"><span class="title-eco">Eco</span><span class="title-bites">Bites</span></a></h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="recipes.html">Recipes</a></li>
+                <li class="active"><a href="favorites.html">Favorites</a></li>
+                <li id="sign-in-link"><a href="signin.html">Sign In</a></li>
+                <li class="hidden" id="profile-link"><a href="profile.html">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="favorites-section">
+            <h2>Your Favorite Recipes</h2>
+            <div class="recipe-container" id="favorites-container">
+                <!-- Favorite recipes will be dynamically populated here -->
+            </div>
+        </section>
+
+        <section id="no-favorites" class="hidden">
+            <p>You have no favorite recipes yet. Browse through our <a href="recipes.html">Recipes</a> and add your favorites!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 EcoBites. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (!user) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            document.getElementById('sign-in-link').classList.add('hidden');
+            document.getElementById('profile-link').classList.remove('hidden');
+
+            const favoritesContainer = document.getElementById('favorites-container');
+            const noFavoritesSection = document.getElementById('no-favorites');
+
+            try {
+                const response = await fetchFavorites(user.id);
+
+                if (response.success && response.favorites.length > 0) {
+                    response.favorites.forEach(recipe => {
+                        const recipeCard = document.createElement('div');
+                        recipeCard.classList.add('recipe-card');
+                        recipeCard.innerHTML = `
+                            <a href="recipes/${recipe.id}.html">
+                                <img src="${recipe.image}" alt="${recipe.name}">
+                                <h3>${recipe.name}</h3>
+                                <p>${recipe.short_description}</p>
+                            </a>
+                            <button class="remove-favorite-btn" data-id="${recipe.id}">Remove</button>
+                        `;
+                        favoritesContainer.appendChild(recipeCard);
+                    });
+
+                    favoritesContainer.addEventListener('click', async function(event) {
+                        if (event.target.classList.contains('remove-favorite-btn')) {
+                            const recipeId = event.target.getAttribute('data-id');
+                            const removeResponse = await removeFromFavorites(recipeId);
+                            if (removeResponse.success) {
+                                event.target.closest('.recipe-card').remove();
+                                if (favoritesContainer.children.length === 0) {
+                                    noFavoritesSection.classList.remove('hidden');
+                                }
+                            } else {
+                                alert('Failed to remove favorite. Please try again.');
+                            }
+                        }
+                    });
+                } else {
+                    noFavoritesSection.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching favorites:', error);
+                noFavoritesSection.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

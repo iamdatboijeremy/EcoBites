@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - EcoBites</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="search.js"></script>
+    <style>
+        .recipes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .recipe-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-card h3 {
+            margin: 10px;
+            font-size: 1.5rem;
+        }
+
+        .recipe-card p {
+            margin: 10px;
+            color: #555;
+        }
+
+        .search-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .search-container input {
+            padding: 10px;
+            width: 80%;
+            max-width: 500px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #FFA500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-container button:hover {
+            background-color: #e69500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html"><span class="title-eco">Eco</span><span class="title-bites">Bites</span></a></h1>
+    </header>
+    <main>
+        <div class="search-container">
+            <input id="search-input" type="text" placeholder="Search for recipes...">
+            <button id="search-button">Search</button>
+        </div>
+
+        <div class="recipes-container" id="recipes-container">
+            <!-- Recipes will be dynamically loaded here -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 EcoBites. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('recipes.json')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('recipes-container');
+                    data.recipes.forEach(recipe => {
+                        const recipeCard = document.createElement('div');
+                        recipeCard.classList.add('recipe-card');
+                        recipeCard.innerHTML = `
+                            <a href="${recipe.name.toLowerCase().replace(/\s+/g, '_')}.html">
+                                <img src="${recipe.image}" alt="${recipe.name}">
+                                <h3>${recipe.name}</h3>
+                                <p>${recipe.short_description}</p>
+                            </a>
+                        `;
+                        container.appendChild(recipeCard);
+                    });
+                })
+                .catch(error => console.error('Error fetching recipes:', error));
+        });
+
+        document.getElementById('search-button').addEventListener('click', function () {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const container = document.getElementById('recipes-container');
+            container.innerHTML = '';
+
+            fetch('recipes.json')
+                .then(response => response.json())
+                .then(data => {
+                    const filteredRecipes = data.recipes.filter(recipe =>
+                        recipe.name.toLowerCase().includes(query) ||
+                        recipe.short_description.toLowerCase().includes(query)
+                    );
+
+                    filteredRecipes.forEach(recipe => {
+                        const recipeCard = document.createElement('div');
+                        recipeCard.classList.add('recipe-card');
+                        recipeCard.innerHTML = `
+                            <a href="${recipe.name.toLowerCase().replace(/\s+/g, '_')}.html">
+                                <img src="${recipe.image}" alt="${recipe.name}">
+                                <h3>${recipe.name}</h3>
+                                <p>${recipe.short_description}</p>
+                            </a>
+                        `;
+                        container.appendChild(recipeCard);
+                    });
+
+                    if (filteredRecipes.length === 0) {
+                        container.innerHTML = '<p>No recipes found. Try another search term.</p>';
+                    }
+                })
+                .catch(error => console.error('Error filtering recipes:', error));
+        });
+    </script>
+</body>
+</html>
